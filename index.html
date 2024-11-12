@@ -1,12 +1,123 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>Page Title</title>
-</head>
-<body>
+    <style>
+        body {
+          background-color: black;
+        }
+    </style>
 
-<h1>My First Heading</h1>
-<p>My first paragraph.</p>
+    <body>
 
-</body>
+        <h1>Message Encryption and decryption</h1>
+
+        <p>return:</p> <p id="returnValue"></p>
+        
+        <script>
+            console.log("Initialized")
+            // function myFunction() {
+            //   document.getElementById("demo").style.fontSize = "25px"; 
+            //   document.getElementById("demo").style.color = "red";
+            //   document.getElementById("demo").style.backgroundColor = "yellow";        
+            // }
+
+            // Match length of the key with the message by repeating the key
+            function KeyIndexMatcher(message, key) {
+                let keyNew = key.repeat(Math.ceil(message.length / key.length));
+                if (debug) console.log("keyNew:", keyNew);
+                return keyNew;
+            }
+
+            // Encrypt
+            function Encrypt(message, key) {
+                let encrypted = "";
+                let indexVal = 0;
+                key = KeyIndexMatcher(message, key);
+
+                for (let c of message) {
+                    // Convert message and key ASCII int values and XOR both values
+                    let encryptedCharRaw = parseInt(key[indexVal]) ^ c.charCodeAt(0);
+
+                    // Converting xx ints to xxx
+                    let encryptedChar = encryptedCharRaw < 100 ? "0" + encryptedCharRaw : encryptedCharRaw.toString();
+
+                    if (debug) {
+                        console.log("Encrypt():");
+                        console.log("message:", c, c.charCodeAt(0), "key:", key[indexVal], "encry:", encryptedChar, "encryCharConversion:", String.fromCharCode(parseInt(encryptedChar)));
+                    }
+
+                    encrypted += encryptedChar;
+                    indexVal++;
+                }
+
+                return encrypted;
+            }
+
+            // Decrypt
+            function Decrypt(encrypted, key) {
+                let indexVal = 0;
+                let decrypted_message = "";
+                key = KeyIndexMatcher(encrypted, key);
+
+                for (let i = 0; i < encrypted.length; i += 3) {
+                    let decryptedChar = parseInt(key[indexVal]) ^ parseInt(encrypted.slice(i, i + 3));
+
+                    if (debug) {
+                        console.log("Decrypt():");
+                        console.log("encry:", encrypted.slice(i, i + 3), "encryCharConversion:", String.fromCharCode(parseInt(encrypted.slice(i, i + 3))), "key:", key[indexVal], "decry:", decryptedChar, "decryCharConversion:", String.fromCharCode(decryptedChar));
+                    }
+
+                    decrypted_message += String.fromCharCode(decryptedChar);
+                    indexVal++;
+                }
+
+                return decrypted_message;
+            }
+
+            // mode = e: encrypt / d: decrypt
+            function CallEncryptionDecryption(mode, message, key) {
+                if (mode === "e") {
+                    let encrypted = Encrypt(message, key);
+                    return encrypted;
+                } else if (mode === "d") {
+                    let decrypted = Decrypt(message, key);
+                    return decrypted;
+                } else {
+                    return "none";
+                }
+            }
+
+            function UpdateReturnValue(returnValue) {
+                document.getElementById("returnValue").textContent = returnValue;
+            }
+
+            let debug = 0;
+
+            // while (true) {
+            let message = prompt("Enter message:");
+            let key = prompt("Enter key:");
+            let mode = prompt("Enter mode [*e*/d]:") || "e"; // e: encryption, d: decryption
+            debug = Boolean(prompt("Enter debug mode [*0*/1]:") || 0); // 0: DONT print debug log, 1: print debug log
+
+            console.log("User input");
+            console.log("message:", message);
+            console.log("key:", key);
+            
+            if (debug) {
+                
+                console.log("mode:", mode);
+                console.log("debug:", debug);
+            }
+
+            ReturnVal = CallEncryptionDecryption(mode, message, key)
+            console.log("return:", ReturnVal);
+            UpdateReturnValue(ReturnVal)
+            // }
+                // message="hey there this is me";
+                // key="12345"
+                // console.log("return:", KeyIndexMatcher(message, key));
+            
+        </script>
+
+
+    </body>
 </html>
